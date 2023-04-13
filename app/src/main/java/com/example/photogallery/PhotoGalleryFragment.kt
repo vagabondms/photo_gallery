@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Retrofit
 
 class PhotoGalleryFragment : Fragment() {
 
@@ -14,6 +15,8 @@ class PhotoGalleryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val retrofit: Retrofit = Retrofit.Builder().baseUrl("https://www.flicker.com/").build()
+        val flickApi: FlickrApi = retrofit.create(FlickrApi::class.java)
     }
 
     override fun onCreateView(
