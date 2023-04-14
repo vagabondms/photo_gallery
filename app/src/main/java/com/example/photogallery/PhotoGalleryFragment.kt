@@ -1,11 +1,13 @@
 package com.example.photogallery
 
 import android.os.Bundle
+import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -46,8 +48,31 @@ class PhotoGalleryFragment : Fragment() {
 
         photoGalleryViewModel.galleryItemLiveData.observe(viewLifecycleOwner) { galleryItems ->
             Log.d(TAG, "Have gallery items from ViewModel $galleryItems")
+            photoRecyclerView.adapter = PhotoAdapter(galleryItems)
         }
     }
+
+    private class PhotoHolder(itemTextView: TextView): RecyclerView.ViewHolder(itemTextView){
+        val bindTitle: (CharSequence) -> Unit = itemTextView::setText
+
+        fun bind(galleryItem: GalleryItem){
+            bindTitle(galleryItem.title)
+        }
+    }
+
+    private class PhotoAdapter(val galleryItems: List<GalleryItem>): RecyclerView.Adapter<PhotoHolder>(){
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_gallery_list_item, parent, false) as TextView
+            return PhotoHolder(view)
+        }
+
+        override fun getItemCount(): Int = galleryItems.size
+
+        override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
+            holder.bind(galleryItems[position])
+        }
+    }
+
 
     companion object {
         @JvmStatic
