@@ -1,5 +1,6 @@
 package com.example.photogallery
 
+import com.example.photogallery.api.FlickrResponse
 import retrofit2.Call
 import retrofit2.http.GET
 
