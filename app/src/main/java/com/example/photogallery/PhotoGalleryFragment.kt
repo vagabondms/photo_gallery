@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -16,19 +17,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private const val TAG = "PhotoGalleryFragment"
+
 class PhotoGalleryFragment : Fragment() {
 
     private lateinit var photoRecyclerView: RecyclerView
+    private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val flickrLIveData: LiveData<List<GalleryItem>> = FlickrRepository().fetchPhotos()
-        flickrLIveData.observe(
-            this
-        ) { responseString ->
-            Log.d(TAG, "Response received: $responseString")
-        }
-
+        photoGalleryViewModel = ViewModelProvider(this).get(PhotoGalleryViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -39,9 +36,17 @@ class PhotoGalleryFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_photo_gallery, container, false)
 
         photoRecyclerView = view.findViewById(R.id.photo_recycle_view)
-        photoRecyclerView.layoutManager = GridLayoutManager(context,3)
+        photoRecyclerView.layoutManager = GridLayoutManager(context, 3)
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        photoGalleryViewModel.galleryItemLiveData.observe(viewLifecycleOwner) { galleryItems ->
+            Log.d(TAG, "Have gallery items from ViewModel $galleryItems")
+        }
     }
 
     companion object {
